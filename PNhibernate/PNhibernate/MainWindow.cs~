@@ -1,0 +1,83 @@
+using System;
+using Gtk;
+
+using NHibernate;
+
+using NHibernate.Cfg;
+using NHibernate.Tool.hbm2ddl;
+
+using Serpis.Ad;
+
+public partial class MainWindow: Gtk.Window
+{	
+	public MainWindow (): base (Gtk.WindowType.Toplevel)
+	{
+		Build ();
+		
+		Configuration configuration = new Configuration();
+		configuration.Configure ();
+		configuration.SetProperty(NHibernate.Cfg.Environment.Hbm2ddlKeyWords, "none");
+		configuration.AddAssembly(typeof(Categoria).Assembly);
+		
+		//new SchemaExport(configuration).Execute(true, false, false);
+		
+		ISessionFactory sessionFactory = configuration.BuildSessionFactory ();
+		
+		updateCategora(sessionFactory);
+		
+		insertCategoria(sessionFactory);
+		
+		
+		sessionFactory.Close ();		
+		
+	}
+	
+	/*private void insertCategoria(ISessionFactory sessionFactory){
+		ISession session = sessionFactory.OpenSession();
+		try{
+		Categoria categoria=new Categoria();
+		categoria.Nombre=DateTime.Now.ToString();
+			session.SaveOrUpdate(categoria);
+			session.Flush();
+		}finally{
+			session.Close();
+		}
+	}
+	}
+		
+	private void insertCategoria(ISessionFactory sessionFactory){
+		ISession session = sessionFactory.OpenSession();
+		try{
+		Categoria categoria=new Categoria();
+		categoria.Nombre=DateTime.Now.ToString();
+			session.SaveOrUpdate(categoria);
+			session.Flush();
+		}finally{
+			session.Close();
+		}
+	}*/
+	
+	private void insertCategoria(ISessionFactory sessionFactory){
+		ISession session = sessionFactory.OpenSession();
+		using(Categoria categoria=new Categoria()){
+		categoria.Nombre=DateTime.Now.ToString();
+			session.SaveOrUpdate(categoria);
+			session.Flush();
+		}
+	}
+	private void insertCategoria(ISessionFactory sessionFactory){
+		using(ISession session = sessionFactory.OpenSession()){
+		Categoria categoria=new Categoria();
+		categoria.Nombre=DateTime.Now.ToString();
+			session.SaveOrUpdate(categoria);
+			session.Flush();
+		}
+	}
+		
+	
+	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
+	{
+		Application.Quit ();
+		a.RetVal = true;
+	}
+}
