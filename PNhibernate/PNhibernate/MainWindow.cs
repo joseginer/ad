@@ -27,8 +27,20 @@ public partial class MainWindow: Gtk.Window
 		
 		//insertCategoria(sessionFactory);
 
-		loadArticulo(sessionFactory);		
+		//loadArticulo(sessionFactory);
 		
+		ISession session =sessionFactory.OpenSession();
+		//ICriteria criteria =session.CreateCriteria(typeof(Categoria));
+		ICriteria criteria =session.CreateCriteria(typeof(Articulo));
+		IList list =criteria.List();
+		//foreach(Categoria categoria in list)
+			//ConsoleWriteLine("Categoria Id={0} Nombre{1}",categoria.Id, categoria.Nombre);
+		foreach(Articulo articulo in list)
+			ConsoleWriteLine("Articulo Id={0} Nombre{1}",articulo.Id, articulo.Nombre, articulo.Precio);
+		
+
+			session.Close();
+	
 		sessionFactory.Close ();		
 		
 	}
